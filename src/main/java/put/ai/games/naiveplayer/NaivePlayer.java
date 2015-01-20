@@ -16,43 +16,62 @@ public class NaivePlayer extends Player {
 
     @Override
     public String getName() {
-        return "Hubert Kazmierczak 109705 Daniel Koza 109701";
+        return "Bartosz Kostaniak 109713 Kamil Szczepanski 109790";
     }
     
     @Override
     public Move nextMove(Board b) {    	
         List<Move> moves = b.getMovesFor(getColor());
-        Color c = getColor();
         
-        Move bestMove;
-        int rand = random.nextInt(moves.size());
+        Move playerMove;               
         
-        bestMove = moves.get(rand);
+        playerMove = checkIfOpponentLoses(b, moves);
         
-        boolean opponentWins = true;
+        playerMove = generateWinMove(b, moves, playerMove);
         
-        while (opponentWins) {
-        	Board b1 = b.clone();
-        	b1.doMove(bestMove);
-        	if(b1.getWinner(c)!=getOpponent(c)) {
-        		opponentWins = false;
-        	}
-        	moves.remove(rand);
-        	rand = random.nextInt(moves.size());
-        	bestMove = moves.get(rand);
-        }
-        
-        for(Move m : moves){
-        	Board b2 = b.clone();
-        	b2.doMove(m);        	
-        	
-        	if(b2.getWinner(c)==c) {
-        		bestMove = m;
-        		break;
-        	}
-        }
-        
-		return bestMove;
+		return playerMove;
+   }
+    
+   private Move checkIfOpponentLoses(Board b, List<Move> moves) {
+	   Move playerMove;
+	   Color c = getColor();
+	   int randInteger = random.nextInt(moves.size());  
+	   
+       playerMove = moves.get(randInteger);   
+       
+       boolean opponentLoses = false; 
+	   
+	   while (!opponentLoses) {
+	       	Board boardClone = b.clone();
+	       	boardClone.doMove(playerMove);
+	       	
+	       	if(boardClone.getWinner(c)!=getOpponent(c)) {
+	       		opponentLoses = true;
+	       	}	       	
+	       	
+	       	moves.remove(randInteger);
+	       	randInteger = random.nextInt(moves.size());
+	       	playerMove = moves.get(randInteger);
+       }
+	   
+	   return playerMove;
+   }
+    
+   private Move generateWinMove(Board b, List<Move> moves, Move generatedMove) {
+		Move winMove = generatedMove;
+		Color c = getColor();
+		
+		for(Move m : moves){
+		   	Board boardClone = b.clone();
+		   	boardClone.doMove(m);        	
+		
+		   	if(boardClone.getWinner(c)==c) {
+		   		winMove = m;
+		   		break;
+		   	}		
+		}
+		
+	    return winMove;
    }
 
 
