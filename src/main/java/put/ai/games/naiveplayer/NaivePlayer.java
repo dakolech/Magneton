@@ -22,16 +22,30 @@ public class NaivePlayer extends Player {
     @Override
     public Move nextMove(Board b) {    	
         List<Move> moves = b.getMovesFor(getColor());
+        Color c = getColor();
         
         Move bestMove;
+        int rand = random.nextInt(moves.size());
         
-        bestMove = moves.get(random.nextInt(moves.size()));
+        bestMove = moves.get(rand);
+        
+        boolean opponentWins = true;
+        
+        while (opponentWins) {
+        	Board b1 = b.clone();
+        	b1.doMove(bestMove);
+        	if(b1.getWinner(c)!=getOpponent(c)) {
+        		opponentWins = false;
+        	}
+        	moves.remove(rand);
+        	rand = random.nextInt(moves.size());
+        	bestMove = moves.get(rand);
+        }
         
         for(Move m : moves){
         	Board b2 = b.clone();
-        	b2.doMove(m);
+        	b2.doMove(m);        	
         	
-        	Color c = getColor();
         	if(b2.getWinner(c)==c) {
         		bestMove = m;
         		break;
